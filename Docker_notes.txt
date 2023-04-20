@@ -1,0 +1,142 @@
+running container in an interactive mode:
+docker run -i image_name shellname
+e.g. docker pull openjdk
+
+docker run -i --rm openjdk
+--rm is to remove the container as soon as u exit the shell
+
+u can rename the container or u can start a new container using a name:
+docker run -i --name myjava openjdk
+
+=============================Volume Mapping======================
+If we want to execute some code from host to container;
+1) push it from host to remote repo and inside the container u can pull the code from remote repo
+2) we can copy the code file from host to container and then use it in the container
+ docker cp Hello.java myjava:/tmp/Hello.java
+
+Note: editing the file either in Host or Container will not reflect in both as it is a copied file.
+
+3) If we want to reflect modification to the file in both we need to do Volume mapping. It is like 
+docker bind mount and it akes the host folder accessible inside the container directly.
+	docker run -i -v f:\DockerDemoes:c:\data openjdk
+
+	docker run -i -v %cd%:c:\data openjdk    ---for current directory mapping use env variable 
+	%cd% in windows and ${PWD} for linux env
+
+If u want to directly execute some command in running container from the host:
+	docker exec tender_wescoff javac /data/Hello.java
+
+===========================Working with Dockerfile==================================
+-This file is used for creating your own custom image
+-Its name must be Dcokerfile with no extension. note 'D' is capital.
+-It stores metadata for the image and instructions to be followed when docker container will use this image and start.
+
+Once this file is created, image can be build using the command :
+	docker build -f /path/to/a/Dockerfile .
+
+Docker instructions in the Dockerfile:
+The instructins are not case sensitive but as a convention we must follow CAPITAL case.
+
+Docker runs the instructions from to to bottom order. The first instruction must be FROM in order to specify the base image.
+ 
+FROM: This instruction is used to set the Base Image for the subsequent instructions.
+
+RUN 
+This instruction is used to execute any command of the current image
+
+CMD
+This is used to execute the application by the image. We should use CMD always as:
+	CMD ["executable","param1","param2"]
+
+You may have more than one CMD instructions but only last one will be considered
+
+COPY
+This instruction is used to copy new files or directories from source to the filesystem of the container at the destination.
+	Ex
+		COPY abc/ /xyz 
+
+WORKDIR 
+This is to set the working directory for any RUN, CMD and COPY instruction that follows it in the Dockerfile. If the working directory does not exist, it will be created by default.
+
+Multple times this instruction can be used.
+
+--------------------Docker for Java Application--------------------------
+FROM openjdk:11
+COPY . /tmp/java
+WORKDIR /tmp/java
+RUN javac Hello.java
+CMD ["java","Hello"]
+
+
+-------------------Docker file for ASP.NET Core======================
+we need two base images:
+1) for sdk--dotnet/sdk
+2) for runtime image ----dotnet/aspnet
+
+
+-------------------Docker compose--------------------------------------
+It is a tool that assist in defining and sharing multi-container applications. By using Compose, we cab define services in a YAML file, as well as spin them up and tear them down with one single command.
+
+
+docker-compose up --build
+
+lets have two containers for sql server and ASP.NET app:
+
+
+docker pull mcr.microsoft.com/mssql/server
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+ 
+ 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

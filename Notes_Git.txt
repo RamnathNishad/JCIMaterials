@@ -1,0 +1,241 @@
+Let's have some questions:
+1) Have u ever made changes to a file or code that you wanted to revert later?
+2) Have u ever lost a code or file?
+3) Do u have a backup of the codes u write and change everyday
+4) Did u ever have to maintain multiple versins of a code or file and analyze their differences
+5) Did u ever have to share ur code or let other people work on it?
+6) Do u ever track the work being done in detail?
+7) Do u need to experiment with your codes without messing up the current work
+
+So if answer is yes for any of these challenges, u need a VCS(Version Control System).
+
+The most popular of all is the git.
+It is most widely used open source, distributed version control system today, can handle small to large projects efficiently.
+Most of the existing control systems have centralized repository whcih means collaboration is tough.
+Git offers you a local and remote repository which can be synced simply by running commands.
+
+If so many developers(150+) are working in a project then what challenges u may have:
+-How to develop software collaboratively and securely while adhering to organization approved processes
+-How to maintain and control the version of the codes?
+-How to create and maintaing remote repositories?
+-How to branch and merge the codes within repositories
+-How to maintain a local repo with the same features to protect server data
+-and many more challenges
+
+Organization slve it using Git
+
+To install :
+http://git-scm.com/downloads
+
+Git configuration levels:-
+There are three levels of configuration levels in Git.
+
+1) System level:- It is the top most level. It is applicable to everyone who uses the system in which git is installed.
+The settings are defined using command: git config -system 
+It saves in gitconfig file.
+
+2) Global level: This is next after system level. It referes the user's settings for all repositories. Settings are definedusing 'git config -global' and saves to (on windows it would be Users/.gitconfig)
+
+3) Local level:- This is the last level and refers to the user at repository level. The settings are defined using 'git config -local' and saves to .git/config file
+
+Notes: Local overrides Global and Global overrides System level.
+
+
+For any commits within the repository, following settings needs to be configured failing which git command would throw warning:
+		1. user.name
+		2. user.email
+
+---------------------------Configuring git------------------
+
+Git indicates two missing configurations: user.name and user.email that need to be defined at global level.
+			git config --global user.name "Ramnath"
+			git config --global user.email "raman9999@gmail.com"
+
+			git config --global 
+
+
+========================Working with basic commands===========================
+
+Creating a Repository in Git
+-Create a folder and enter inside the folder and give this command:
+	"git init newfolder" 
+
+--------------------------Git Workflow---------------------------
+Git has three stages in workflow. It maintains three snapshots of a file in separate directories.
+				-Working area to Staging area
+				-Staging area to Local Repository
+
+
+				create a file index.html
+				git status  ----------untracked
+				git add .
+				git status---------------new file in staging area
+				git commit - m "initial commit"
+				git status-------------nothing to commit
+
+				
+				update the index.html
+				git status  --------------modified
+				git add . 
+				git status---to be committed
+				git commit -m "h1 added"
+				git status------all clear
+				git log
+				git log --oneline
+
+
+---------------------Tracking the file differences--------------
+Lets see how git compares different cmmits for different version of file maintained within the working directory and its last staging area
+
+		git status -----shows nothing to commit
+		git diff index.html -------no output means file in the working directory is same as the file in staged
+		lets make some changes to file
+		git status -----says modified
+		git diff index.html -----to identify the current and last staged file
+		git add . and the git diff index.html, it won't show output as file in working area and staged area are same now.
+		git diff --staged index.html  --displays the changes from last commit to last staged
+		git log --oneline      shows commit per line
+		git diff --staged HEAD, shows exact chnages from the last commit
+		git diff --staged HEAD~1, shows the difference from the second last commit
+		
+		git diff <<id>> to check difference as per commit id
+
+-----------------Reverting the earlier commits------------
+Now since we have commit and trcak files...., how to revert in Git
+
+	create a file fileA.txt and perform few commits as below:
+		Line 1
+		Line 2
+		Line 3
+		Line 4
+
+Lets suppose i want to make changes in line 4, so i have to revert to line 3. To restrict upto the version ,
+			git checkout HEAD~1
+
+Then make changes and add and commit.
+
+Note: once u checkut the file is automatically staged ober added. u need to do next is just commit.
+
+------------------Deleting files in Git-------------------
+Deleting files from Staging area and working directory
+			git rm filename  ---deletes file from staging area and working area
+
+Delete a file only from staging area:
+			git rm --cached filename
+
+How to restore files that are already deleted: even if file is deleted, its commit history is still present in the repository.
+user needs to identify the version that needs to restored and revert the deletion.
+ 
+----------------Ignoring files in Git------------------
+Sometimes during development temporay files are added to the repository which u don't want to track and commit. This can be done by separate "ignore" command in git.
+
+Create .gitignore file in the working directory and specify the file name, pattern of files using wild card or regular expression. save it anc ommit it.
+Now git will start ignoring those files.
+
+What if you want to add a file that is in the .gitignore file or pattern that matched the entry?
+
+==========================Branching in Git===================
+It is very imp concept in Git. It helps in reducing errors and protects the content of the main repository.
+It is like a tree having branches to accomodate leaves, Git branches have different lines of codes.
+It is a separate workspace usually created when u need to experiment or test something without impacting the main code-base. 
+In addition to these, git branches are used to manage releases and create hotfixes to production branches.
+
+-A branch is a method of requesting a new working directory and staging area.
+
+------------
+		creating a new branch
+		-git branch <branch-name>
+		-git branch    ------list all the branches in the current repository
+		-git checkout <branch-name>     ----to switch to a branch
+
+
+
+-------------Merging Branches in Git----------------
+
+Fast-forward merge and Recursive merge:-
+
+In fast-forward, it does not create a new commit while merging, it just appends the feature commits in front of the main branch. It is used when there is no parallel commits in the branches whereas i recursive, it happens when there are parallel commits in the branches so it creates a new commit while merging.
+
+========================Rebasing=======================
+
+Collaboration is essential in development environment. Sometimes we branch-off a commit and u r developing ur own feature, it is likely that ur feature is dependent on a subsequent commit done on another branch. In such cases, u need to get the last commit from another branch. Git Rebase is used in such cases.
+Rebasing is the process of moving a branch to a differnt commit.
+	git rebase main    ---Rebase the current branch to the latest commit in main
+
+Rebase vs Merge: Both of these are designed to integrate changes across branches. Eventually both solve the same problem differently.
+Git merge can pollute the history and makes it confusing for other users to understand
+Git rebase creates a clean history by removing the commit from other branch.
+
+
+Cherry pickup:- While working in a branch u felt the code committed in the other branch should be picked-up and added to ur current branch, cherry pickup command is used.
+
+Rebase vs Cherry pickup :- rebase the full branch commits are added but in cherry pickup only a specific commit is picked-up and added to current.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+				
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+ 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

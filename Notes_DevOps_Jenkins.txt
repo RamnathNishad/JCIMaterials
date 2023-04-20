@@ -1,0 +1,167 @@
+what is DevOps?
+
+A set of practices intended to reduce the time between committing a change to a system and change being placed into normal production, while ensuring high quality.
+
+What is CI/CD?
+The process could include running automatic code quality scans and generats a report of how well your latest changes adhere to good coding practices, buid the code and run any automated test if u have written to make sure your changes didn't break the functionality. Simply this process is called Continuous Integration. On the other hand Continuous deployment is much like to automate the deployment process and it makes sure that your code gets automaticaly deployed to wherever your or your users can get to it.
+
+What is Jenkins Pipeline?
+
+It is a suite of plugins that supports implementing and integrating continous delivery pipelines into Jenkins.
+
+
+Jenkins is a Continuous Integration (CI) server or tool which is written in Java.
+
+Below are the advantages of Jenkins:
+-It is an open source tool with great community support.
+-Easy to install, and it has a simple configuration through a web-based UI which speeds up the Job.
+-It has almost 900+ plugins to ease your work. If u want a new plugin, just code it up and share with community.
+-It is built with Java and hence, it is portable on a;; major platforms.
+
+===================Instaling Jenkins on windows machine===============
+Step1:
+Download Java SE runtime Environment (Make sure JRE is installed)
+http://www.oracle.com/technetwork/java/javase/downloads/jre8-downloads-2133155.html
+
+Step 2:
+ install JRE from the downloaded .
+check if JRE is installed : java -version
+
+Steps 3
+Download Jenkins
+https://jenkins.io/download/thank-you-downloading-windows-installer-stable/
+
+Step 4
+Install Jenkins using the downloaded exe and follow all the instructions suggested by the installer
+
+===============Setting up Jenkins for .NET Project=====================
+Setting up Jenkins environment requires that you configure the plugins first, and then create a build system.
+
+For dotnet we need following components:
+-Git version control must be installed
+-Git plug-in should be installed in Jenkins
+-MSBuild extension in Jenkins must be installed
+-Anything else for e.g. as the MSTest, you can install later on by urself
+
+-NuGet Application is there
+-install NuGet plugin
+
+What happens when we click "Build Now" in Jenkins pipeline?
+-It does "Check-out" of the code from the remote repository and puts into jenkins workspace folder at "C:\ProgramData\Jenkins\.jenkins\workspace\".
+-stages will be followed as per the pipeline configurations like restoring packages, building the project, cleaning steps, publishing the artifacts to a location for deployment.
+
+
+Let's configure the MSBuild plugin which we downloaded in the Jenkins to our pipeline:
+Build Triggers:-
+There are several options such as,
+Timely build triggers
+	-Useful in offices
+	-Where you only build the project at the end of the day
+After other projects build
+	-can be used in environments, where your project is a dependent project, and you have to check whether you can utilize the latest build artifacts.
+Poll the SCM(Source control )
+	-You can set a timer, after which the Jenkins system will poll the version control t check if the repositry has been udated or not.
+
+==================Jenkins (Declarative Pipeline)============
+pipeline script:
+
+pipeline {
+	agent any
+	
+	stages {
+		stage('Build') {
+			steps {
+				echo 'Building...'
+			}
+		}
+		stage('Test') {
+			steps {
+				echo 'Testing...'
+			}
+		}
+		stage('Deploy') {
+			steps {
+				echo 'Deploying...'
+			}
+		}
+	}
+}
+
+
+
+
+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
+
+pipeline {
+    agent any
+    environment {
+        dotnet = 'C:\\Program Files\\dotnet\\dotnet.exe'
+    }
+    stages {
+        stage('Checkout Stage') {
+            steps {
+                git branch:'main', credentialsId: '5ba5e0da-116a-47df-8e8c-639f4654358c', url: 'https://github.com/Jaydeep-007/JenkinsWebApplicationDemo.git', branch: 'main'
+            }
+        }
+        stage('Build Stage') {
+            steps {
+                bat 'C:\\ProgramData\\Jenkins\\.jenkins\\workspace\\TestPipeline\\JenkinsWebApplicationDemo.sln --configuration Release'
+            }
+        }
+        stage('Test Stage') {
+            steps {
+                bat 'dotnet test %WORKSPACE%\\TestProject1\\TestProject1.csproj'
+            }
+        }
+        stage("Release Stage") {
+            steps {
+                bat 'dotnet build %WORKSPACE%\\JenkinsWebApplicationDemo.sln /p:PublishProfile=" %WORKSPACE%\\JenkinsWebApplicationDemo\\Properties\\PublishProfiles\\FolderProfile.pubxml" /p:Platform="Any CPU" /p:DeployOnBuild=true /m'
+            }
+        }
+        stage('Deploy Stage') {
+            steps {
+                //Deploy application on IIS
+                bat 'net stop "w3svc"'
+                bat '"C:\\Program Files (x86)\\IIS\\Microsoft Web Deploy V3\\msdeploy.exe" -verb:sync -source:package="%WORKSPACE%\\JenkinsWebApplicationDemo\\bin\\Debug\\net6.0\\JenkinsWebApplicationDemo.zip" -dest:auto -setParam:"IIS Web Application Name"="Demo.Web" -skip:objectName=filePath,absolutePath=".\\\\PackagDemoeTmp\\\\Web.config$" -enableRule:DoNotDelete -allowUntrusted=true'
+                bat 'net start "w3svc"'
+            }
+        }
+    }
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+ 
